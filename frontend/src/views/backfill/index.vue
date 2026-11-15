@@ -1,9 +1,9 @@
 <template>
-  <section class="page" data-module="__KEY__">
+  <section class="page" data-module="backfill">
     <header class="page-head">
-      <div><h2>__NAME__</h2><p class="page-desc">__DESC__</p></div>
+      <div><h2>历史补数</h2><p class="page-desc">维护补数批次的输入、执行约束与结果记录，为历史补数提供可验证的数据工程流程。</p></div>
       <div class="page-actions">
-        <button class="btn primary" type="button" data-testid="open-create" @click="openCreate">登记__ENTITY__</button>
+        <button class="btn primary" type="button" data-testid="open-create" @click="openCreate">登记补数批次</button>
         <button class="btn" type="button" data-testid="export" @click="exportRows">导出作业清单</button>
       </div>
     </header>
@@ -27,7 +27,7 @@
       <div style="margin-top:4px;">{{ selectedItem.logs || '暂无日志' }}</div>
     </div>
     <div v-if="showCreate" class="modal-backdrop" data-testid="create-modal">
-      <form class="modal" @submit.prevent="submitCreate"><h3>登记__ENTITY__</h3>
+      <form class="modal" @submit.prevent="submitCreate"><h3>登记补数批次</h3>
         <label v-for="field in columns.slice(0,3)" :key="field" class="create-field"><span>{{ field }}</span><input v-model="createValues[field]" :placeholder="`请输入${field}`" required /></label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
           <button class="btn" type="button" @click="showCreate=false">取消</button>
@@ -40,9 +40,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { request } from '@/api/client'
-const ENDPOINT = '/api/__KEY__'
-const columns = __FIELDS__
-const actions = __ACTIONS__
+const ENDPOINT = '/api/backfill'
+const columns = ["批次编号", "目标数据集", "开始日期", "结束日期", "并行数量", "覆盖策略", "完成水位", "失败区间"]
+const actions = ["提交校验", "启用配置", "停用配置"]
 const timelineItems = ref<any[]>([])
 const selectedItem = ref<any>(null)
 const dateFrom = ref(''); const dateTo = ref('')

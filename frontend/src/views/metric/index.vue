@@ -1,7 +1,7 @@
 <template>
-  <section class="page" data-module="__KEY__">
+  <section class="page" data-module="metric">
     <header class="page-head">
-      <div><h2>__NAME__</h2><p class="page-desc">__DESC__</p></div>
+      <div><h2>指标口径</h2><p class="page-desc">维护指标定义的输入、执行约束与结果记录，为指标口径提供可验证的数据工程流程。</p></div>
     </header>
     <div class="analysis-summary">
       <article v-for="m in summaryMetrics" :key="m.label" class="analysis-card" data-testid="kpi-card">
@@ -30,14 +30,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { request } from '@/api/client'
-const ENDPOINT = '/api/__KEY__'
+const ENDPOINT = '/api/metric'
 const summaryMetrics = ref<{label:string;value:number;trend:number}[]>([])
 const results = ref<any[]>([]); const chartData = ref<{label:string;value:number}[]>([])
 const loading = ref(false)
 const params = ref<Record<string,string>>({})
-const paramFields = __FIELDS__.filter((f: string) => !['编号','名称','版本'].includes(f)).slice(0, 4)
+const paramFields = ["指标编号", "指标名称", "计算公式", "统计粒度", "时间范围", "筛选条件", "精度位数", "口径版本"].filter((f: string) => !['编号','名称','版本'].includes(f)).slice(0, 4)
 const options: Record<string,string[]> = { '统计粒度': ['按日','按周','按月'], '分组字段': ['全量','按类型','按区域'], '比较方法': ['环比','同比','绝对值'], '时间范围': ['最近7天','最近30天','最近90天'] }
-const resultColumns = computed(() => __FIELDS__.slice(0, 5))
+const resultColumns = computed(() => ["指标编号", "指标名称", "计算公式", "统计粒度", "时间范围", "筛选条件", "精度位数", "口径版本"].slice(0, 5))
 function barHeight(v: number) { const max = Math.max(...chartData.value.map(d => d.value), 1); return Math.max(10, (v / max) * 140) }
 async function fetchSummary() { try { const res = await request(`${ENDPOINT}/summary`); summaryMetrics.value = (await res.json()).metrics || [] } catch(e) {} }
 async function runAnalysis() {

@@ -1,13 +1,13 @@
 <template>
-  <section class="page" data-module="__KEY__">
+  <section class="page" data-module="landing">
     <header class="page-head">
       <div>
-        <h2>__NAME__管理</h2>
-        <p class="page-desc">__DESC__</p>
+        <h2>原始数据落地管理</h2>
+        <p class="page-desc">维护落地区段的输入、执行约束与结果记录，为原始数据落地提供可验证的数据工程流程。</p>
       </div>
       <div class="page-actions">
-        <button class="btn primary" data-testid="open-create" type="button" @click="openCreate">登记__ENTITY__</button>
-        <button class="btn" data-testid="export" type="button" @click="exportRows">导出__NAME__清单</button>
+        <button class="btn primary" data-testid="open-create" type="button" @click="openCreate">登记落地区段</button>
+        <button class="btn" data-testid="export" type="button" @click="exportRows">导出原始数据落地清单</button>
       </div>
     </header>
 
@@ -51,14 +51,14 @@
           </td>
         </tr>
         <tr v-if="!rows.length">
-          <td :colspan="columns.length + 1" class="empty-state">暂无__NAME__数据，可先登记__ENTITY__</td>
+          <td :colspan="columns.length + 1" class="empty-state">暂无原始数据落地数据，可先登记落地区段</td>
         </tr>
       </tbody>
     </table>
 
     <div v-if="showCreate" class="modal-backdrop" data-testid="create-modal">
       <form class="modal" @submit.prevent="submitCreate">
-        <h3>登记__ENTITY__</h3>
+        <h3>登记落地区段</h3>
         <label v-for="field in columns" :key="field" class="create-field">
           <span>{{ field }}</span>
           <input v-model="createValues[field]" :data-testid="`create-${field}`" required />
@@ -73,7 +73,7 @@
     </div>
 
     <footer class="page-foot">
-      <span>共 {{ total }} 条__NAME__记录</span>
+      <span>共 {{ total }} 条原始数据落地记录</span>
       <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
     </footer>
   </section>
@@ -86,11 +86,11 @@ import { request } from '@/api/client'
 
 type Row = Record<string, string | number | null>
 
-const ENDPOINT = '/api/__KEY__'
-const columns = __FIELDS__
-const actions = __ACTIONS__
-const statuses = __STATUSES__
-const metricNames = __METRICS_NAMES__
+const ENDPOINT = '/api/landing'
+const columns = ["区段编号", "来源名称", "落地路径", "文件格式", "批次标识", "接收时间", "原始行数", "校验摘要"]
+const actions = ["提交校验", "启用配置", "停用配置"]
+const statuses = ["草稿", "待校验", "已启用", "已停用"]
+const metricNames = ["落地区段总数", "待校验落地区段", "已启用落地区段"]
 
 const rows = ref<Row[]>([])
 const total = ref(0)
@@ -120,7 +120,7 @@ async function exportRows() {
     const url = URL.createObjectURL(await response.blob())
     const link = document.createElement('a')
     link.href = url
-    link.download = '__KEY__.csv'
+    link.download = 'landing.csv'
     link.click()
     URL.revokeObjectURL(url)
   } catch (error) {
@@ -160,11 +160,11 @@ async function runAction(action: string, row: Row) {
       body: JSON.stringify({ action }),
     })
     if (!response.ok) {
-      throw new Error('__NAME__动作未生效，请稍后重试')
+      throw new Error('原始数据落地动作未生效，请稍后重试')
     }
     await reload()
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : '__NAME__操作失败'
+    errorMessage.value = error instanceof Error ? error.message : '原始数据落地操作失败'
   }
 }
 
@@ -174,13 +174,13 @@ async function reload() {
   try {
     const response = await request(`${ENDPOINT}?${query}`)
     if (!response.ok) {
-      throw new Error('__ENTITY__列表读取失败')
+      throw new Error('落地区段列表读取失败')
     }
     const payload = await response.json()
     rows.value = payload.items ?? []
     total.value = payload.total ?? rows.value.length
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : '__NAME__列表读取失败'
+    errorMessage.value = error instanceof Error ? error.message : '原始数据落地列表读取失败'
   }
 }
 

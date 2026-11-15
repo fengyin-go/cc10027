@@ -1,9 +1,9 @@
 <template>
-  <section class="page" data-module="__KEY__">
+  <section class="page" data-module="extractor">
     <header class="page-head">
-      <div><h2>__NAME__</h2><p class="page-desc">__DESC__</p></div>
+      <div><h2>增量采集</h2><p class="page-desc">维护采集游标的输入、执行约束与结果记录，为增量采集提供可验证的数据工程流程。</p></div>
       <div class="page-actions">
-        <button class="btn primary" type="button" data-testid="open-create" @click="openCreate">登记__ENTITY__</button>
+        <button class="btn primary" type="button" data-testid="open-create" @click="openCreate">登记采集游标</button>
         <button class="btn" type="button" data-testid="export" @click="exportRows">导出作业清单</button>
       </div>
     </header>
@@ -27,7 +27,7 @@
       <div style="margin-top:4px;">{{ selectedItem.logs || '暂无日志' }}</div>
     </div>
     <div v-if="showCreate" class="modal-backdrop" data-testid="create-modal">
-      <form class="modal" @submit.prevent="submitCreate"><h3>登记__ENTITY__</h3>
+      <form class="modal" @submit.prevent="submitCreate"><h3>登记采集游标</h3>
         <label v-for="field in columns.slice(0,3)" :key="field" class="create-field"><span>{{ field }}</span><input v-model="createValues[field]" :placeholder="`请输入${field}`" required /></label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
           <button class="btn" type="button" @click="showCreate=false">取消</button>
@@ -40,9 +40,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { request } from '@/api/client'
-const ENDPOINT = '/api/__KEY__'
-const columns = __FIELDS__
-const actions = __ACTIONS__
+const ENDPOINT = '/api/extractor'
+const columns = ["采集编号", "来源标识", "增量字段", "游标位置", "批次大小", "采集间隔", "起始水位", "截止水位"]
+const actions = ["提交校验", "启用配置", "停用配置"]
 const timelineItems = ref<any[]>([])
 const selectedItem = ref<any>(null)
 const dateFrom = ref(''); const dateTo = ref('')

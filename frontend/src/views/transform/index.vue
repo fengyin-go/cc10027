@@ -1,9 +1,9 @@
 <template>
-  <section class="page" data-module="__KEY__">
+  <section class="page" data-module="transform">
     <header class="page-head">
-      <div><h2>__NAME__</h2><p class="page-desc">__DESC__</p></div>
+      <div><h2>转换编排</h2><p class="page-desc">维护转换节点的输入、执行约束与结果记录，为转换编排提供可验证的数据工程流程。</p></div>
       <div class="page-actions">
-        <button class="btn primary" type="button" data-testid="open-create" @click="openCreate">登记__ENTITY__</button>
+        <button class="btn primary" type="button" data-testid="open-create" @click="openCreate">登记转换节点</button>
         <button class="btn" type="button" data-testid="export" @click="exportRows">导出关系清单</button>
       </div>
     </header>
@@ -29,7 +29,7 @@
       </div>
     </div>
     <div v-if="showCreate" class="modal-backdrop" data-testid="create-modal">
-      <form class="modal" @submit.prevent="submitCreate"><h3>登记__ENTITY__</h3>
+      <form class="modal" @submit.prevent="submitCreate"><h3>登记转换节点</h3>
         <label v-for="field in columns.slice(0,3)" :key="field" class="create-field"><span>{{ field }}</span><input v-model="createValues[field]" :placeholder="`请输入${field}`" required /></label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
           <button class="btn" type="button" @click="showCreate=false">取消</button>
@@ -43,10 +43,10 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { request } from '@/api/client'
-const ENDPOINT = '/api/__KEY__'
-const columns = __FIELDS__
-const actions = __ACTIONS__
-const statuses = __STATUSES__
+const ENDPOINT = '/api/transform'
+const columns = ["节点编号", "输入数据集", "输出数据集", "转换表达式", "执行顺序", "依赖节点", "失败策略", "调度周期"]
+const actions = ["提交校验", "启用配置", "停用配置"]
+const statuses = ["草稿", "待校验", "已启用", "已停用"]
 const STATUS_COLORS: Record<string,string> = { '草稿':'#e2e8f0','待校验':'#fef3c7','已启用':'#d1fae5','已停用':'#fee2e2' }
 const nodeColor = (s: string) => STATUS_COLORS[s] || '#e2e8f0'
 const graph = reactive<{nodes: any[], edges: any[]}>({ nodes: [], edges: [] })
