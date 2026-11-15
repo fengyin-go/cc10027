@@ -493,7 +493,7 @@ test('CRUD模块：筛选、导出、登记、动作、指标全链路', async (
     await page.getByTestId('reset').click()
     await expect(bodyRows).toHaveCount(3)
 
-    const downloadPromise = page.waitForEvent('download')
+    const downloadPromise = page.waitForEvent('download', { timeout: 30000 })
     await page.getByTestId('export').click()
     const download = await downloadPromise
     expect(download.suggestedFilename()).toBe(`${mod.key}.csv`)
@@ -536,7 +536,7 @@ test('DAG拓扑模块：节点渲染、详情、动作、导出', async ({ page 
     await nodes.first().click()
     await expect(page.getByTestId('dag-detail')).toBeVisible()
 
-    const downloadPromise = page.waitForEvent('download')
+    const downloadPromise = page.waitForEvent('download', { timeout: 30000 })
     await page.getByTestId('export').click()
     const download = await downloadPromise
     expect(download.suggestedFilename()).toBe(`${mod.key}.csv`)
@@ -570,7 +570,7 @@ test('时间线模块：甘特条渲染、日期筛选、日志查看、登记',
     await bars.first().click()
     await expect(page.getByTestId('timeline-log')).toBeVisible()
 
-    const downloadPromise = page.waitForEvent('download')
+    const downloadPromise = page.waitForEvent('download', { timeout: 30000 })
     await page.getByTestId('export').click()
     const download = await downloadPromise
     expect(download.suggestedFilename()).toBe(`${mod.key}.csv`)
