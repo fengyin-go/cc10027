@@ -1,0 +1,79 @@
+# 数据工程链路开发平台
+
+面向数据接入、原始落地、清洗转换、分层建模、质量校验、血缘追踪与数据服务发布的数据工程开发平台。
+
+这是一个前后端分离的管理平台：前端 Vue 3 + Vite + TypeScript，后端 FastAPI（Python）。
+两边各自独立启动，前端 dev server 已关掉自动打开页面，启动后按终端打印的地址手工打开。
+
+## 目录结构
+
+```text
+.
+├── frontend/                 Vue 3 + Vite + TypeScript 前端
+│   ├── src/views/            每个业务模块一个页面
+│   ├── src/api/              统一请求封装
+│   ├── src/stores/           会话与筛选状态
+│   └── vite.config.ts        dev server 配置（open: false）
+├── backend/                  FastAPI（Python） 后端
+│   ├── app/routers/          每个业务模块一组接口
+│   ├── app/services/         业务规则与状态流转
+│   └── app/store.py          内存数据仓库与示例数据
+├── .gitignore
+└── docker-compose.yml
+```
+
+## 启动
+
+### 后端
+
+```bash
+cd backend
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+./run.sh
+```
+
+健康检查：`curl http://127.0.0.1:8000/api/health`
+
+### 前端
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+前端默认监听 `http://127.0.0.1:5173/`，dev server 不会自动打开浏览器，
+需要自己访问。`/api` 由 vite 代理到后端 `http://127.0.0.1:8000`。
+
+## 业务模块
+
+| 模块 | 目录 | 业务对象 | 主要字段 |
+| --- | --- | --- | --- |
+| 数据源接入 | `datasource` | 数据源 | 源端编号、连接类型、接入地址 |
+| 增量采集 | `extractor` | 采集游标 | 采集编号、来源标识、增量字段 |
+| 网页抽取 | `crawlrule` | 抽取规则 | 规则编号、入口地址、页面选择器 |
+| 自动化采集 | `robotflow` | 自动化流程 | 流程编号、输入来源、页面定位器 |
+| 原始数据落地 | `landing` | 落地区段 | 区段编号、来源名称、落地路径 |
+| 结构契约 | `schema` | 字段契约 | 契约编号、数据集名称、字段名称 |
+| 数据清洗 | `cleaning` | 清洗规则 | 清洗编号、输入数据集、空值策略 |
+| 重复消除 | `dedup` | 去重策略 | 策略编号、输入数据集、业务键列 |
+| 分区规划 | `partition` | 分区方案 | 方案编号、数据表名、分区字段 |
+| 转换编排 | `transform` | 转换节点 | 节点编号、输入数据集、输出数据集 |
+| 维度建模 | `dimension` | 维度实体 | 维度编号、维度名称、自然键列 |
+| 事实建模 | `factset` | 事实数据集 | 事实编号、事实名称、粒度说明 |
+| 质量校验 | `quality` | 质量规则 | 规则编号、校验数据集、目标字段 |
+| 数据血缘 | `lineage` | 血缘关系 | 关系编号、上游节点、下游节点 |
+| 历史补数 | `backfill` | 补数批次 | 批次编号、目标数据集、开始日期 |
+| 指标口径 | `metric` | 指标定义 | 指标编号、指标名称、计算公式 |
+| 分析实验 | `analysis` | 分析方案 | 方案编号、分析数据集、样本范围 |
+| 数据服务发布 | `delivery` | 服务版本 | 服务编号、输出数据集、查询参数 |
+
+## 约定
+
+- 每个模块的前端页面在 `frontend/src/views/<模块>/index.vue`，后端接口在
+  `backend/app/routers/<模块>.py`，业务规则在 `backend/app/services/<模块>.py`。
+- 列表接口统一返回 `{ items, total, page, size }`，动作接口统一返回 `{ ok, message }`。
+- 状态流转只允许在 `app/services` 里改，路由层不做业务判断。
+
+领域：数据工程
+子方向：数仓与数据湖
