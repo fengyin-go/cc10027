@@ -18,6 +18,13 @@ LIST_FIELDS = ["关系编号", "上游节点", "下游节点", "来源字段", "
 STATUSES = ["草稿", "待校验", "已启用", "已停用"]
 
 
+def csv_cell(value):
+    text = str(value) if value is not None else ""
+    if text and text[0] in "=+-@":
+        text = " + " + text
+    return """ + text.replace(""", """") + """
+
+
 @router.get("")
 def get_graph() -> dict[str, Any]:
     """返回节点与边组成的 DAG 图数据。"""

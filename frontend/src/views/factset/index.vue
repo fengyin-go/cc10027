@@ -77,6 +77,6 @@ function openCreate() { createValues.value = {}; showCreate.value = true }
 async function submitCreate() {
   try { const res = await request(ENDPOINT, { method: 'POST', body: JSON.stringify({ values: createValues.value }) }); if(!res.ok) throw new Error('创建失败'); showCreate.value = false; await reload() } catch(e: any) { errorMessage.value = e.message }
 }
-function exportRows() { window.open(`${ENDPOINT}/export`, '_blank') }
+async function exportRows() { const r = await fetch(`${ENDPOINT}/export`); const url = URL.createObjectURL(await r.blob()); const a = document.createElement('a'); a.href = url; a.download = 'factset.csv'; a.click(); URL.revokeObjectURL(url) }
 onMounted(reload)
 </script>
