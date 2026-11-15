@@ -528,6 +528,7 @@ test('DAG拓扑模块：节点渲染、详情、动作、导出', async ({ page 
   for (const mod of dagModules) {
     await page.goto(`/${mod.key}`)
     await expect(page.locator('svg.dag-svg')).toBeVisible()
+    await page.locator('g.dag-node').first().waitFor({ timeout: 10000 })
     const nodes = page.locator('g.dag-node')
     const count = await nodes.count()
     expect(count).toBeGreaterThanOrEqual(3)
@@ -561,6 +562,7 @@ test('时间线模块：甘特条渲染、日期筛选、日志查看、登记',
 
   for (const mod of timelineModules) {
     await page.goto(`/${mod.key}`)
+    await page.locator('.timeline-bar').first().waitFor({ timeout: 10000 })
     const bars = page.locator('.timeline-bar')
     const count = await bars.count()
     expect(count).toBeGreaterThanOrEqual(3)
@@ -594,6 +596,7 @@ test('分析看板模块：KPI卡片、运行分析、图表渲染', async ({ pa
 
   for (const mod of analysisModules) {
     await page.goto(`/${mod.key}`)
+    await page.getByTestId('kpi-card').first().waitFor({ timeout: 10000 })
     const kpiCards = page.getByTestId('kpi-card')
     const kpiCount = await kpiCards.count()
     expect(kpiCount).toBeGreaterThanOrEqual(2)
